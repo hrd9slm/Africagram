@@ -12,3 +12,82 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Utilisateur {
+  id                String    @id @default(cuid())
+  firstname         String
+  lastname          String
+  email             String    @unique
+  password          String
+  isAdmin           Boolean   @default(false)
+  date_creation     DateTime  @default(now())
+  date_modification DateTime? @updatedAt
+
+  //Relations
+  profil     Profil?
+  id_profile String? @unique
+
+  Publication Publication[]
+  Aime        Aime[]
+  Commentaire Commentaire[]
+  Follower    Follower[]
+}
+
+model Profil {
+  id                String    @id @default(cuid())
+  sexe              String
+  pays              String?
+  ville             String?
+  date_creation     DateTime  @default(now())
+  date_modification DateTime? @updatedAt
+
+  //Relations
+  user   Utilisateur @relation(fields: [userId], references: [id])
+  userId String      @unique // relation scalar field (used in the `@relation` attribute above)
+}
+
+model Publication {
+  id                String    @id @default(cuid())
+  caption           String
+  date_creation     DateTime  @default(now())
+  date_modification DateTime? @updatedAt
+
+  //Relations
+  utilisateur    Utilisateur   @relation(fields: [utilisateur_id], references: [id])
+  utilisateur_id String
+  likes          Aime[]
+  comments       Commentaire[]
+}
+
+model Aime {
+  id            String   @id @default(cuid())
+  date_creation DateTime @default(now())
+
+  //Relations
+  utilisateur_id String
+  post_id        String
+  utilisateur    Utilisateur @relation(fields: [utilisateur_id], references: [id])
+  post           Publication @relation(fields: [post_id], references: [id])
+}
+
+model Commentaire {
+  id            String   @id @default(cuid())
+  message       String
+  date_creation DateTime @default(now())
+
+  //Relations
+  utilisateur_id String
+  post_id        String
+  utilisateur    Utilisateur @relation(fields: [utilisateur_id], references: [id])
+  post           Publication @relation(fields: [post_id], references: [id])
+}
+
+model Follower {
+  id            String   @id @default(cuid())
+  follower_id   String
+  date_creation DateTime @default(now())
+
+  //Relations
+  following_id String
+  follower     Utilisateur @relation(fields: [follower_id], references: [id])
+}

@@ -16,13 +16,13 @@ const upload = multer({
   limits: { fileSize: 5000000 }, // Limite à 5MB
   fileFilter: function (req, file, cb) {
     if (
-      file.mimetype == "image/jpeg" ||
       file.mimetype == "image/png" ||
-      file.mimetype == "image/gif"
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
     ) {
       cb(null, true);
     } else {
-      cb(new Error("Seuls les formats JPEG, PNG et GIF sont autorisés"), false);
+      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"), false);
     }
   },
 });

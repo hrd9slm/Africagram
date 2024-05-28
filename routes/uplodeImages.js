@@ -1,23 +1,22 @@
 const express = require("express");
 const uplodeImageRouter = express.Router();
-const Joi = require("joi");
 const upload = require("../middlewares/uplode-images");
 
-// Define Joi schema for validating the request body
-const imageSchema = Joi.object({
-  fieldname: Joi.required(),
-  originalname: Joi.required(),
-});
-
-uplodeImageRouter.post("/upload", upload.single("Image"), async (req, res) => {
-  console.log(req.body);
-  const { error } = await imageSchema.validate(req.file);
-  if (error) {
-    console.log("hi i'm an error");
-    return res.status(400).send(error.details[0].message);
-  } else {
-    res.send("Images uploaded successfully.");
+// Route for uploding image
+uplodeImageRouter.post(
+  "/upload",
+  upload.single("Image"),
+  async (req, res, next) => {
+    try {
+      if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+      }
+      res.send("File uploaded successfully.");
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error.message);
+    }
   }
-});
+);
 
 module.exports = uplodeImageRouter;

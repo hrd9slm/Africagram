@@ -47,16 +47,16 @@ model Profil {
 }
 
 model Publication {
-  id                String    @id @default(cuid())
+  id                String        @id @default(cuid())
   caption           String
-  date_creation     DateTime  @default(now())
-  date_modification DateTime? @updatedAt
-
+  date_creation     DateTime      @default(now())
+  date_modification DateTime?     @updatedAt
+  image_url         String?
   //Relations
-  utilisateur    Utilisateur   @relation(fields: [utilisateur_id], references: [id])
-  utilisateur_id String
-  likes          Aime[]
-  comments       Commentaire[]
+  utilisateur       Utilisateur   @relation(fields: [utilisateur_id], references: [id])
+  utilisateur_id    String
+  likes             Aime[]
+  comments          Commentaire[]
 }
 
 model Aime {

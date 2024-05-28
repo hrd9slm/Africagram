@@ -1,13 +1,17 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
+const bodyParser = require("body-parser");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const uplodeImageRouter = require("./routes/uplodeImages");
+const postRouter = require("./routes/PostRoutes");
 
 app.use(express.static("public"));
 app.use(uplodeImageRouter);
+app.use(postRouter);
 
+app.use(bodyParser.json());
 app.use((err, req, res, next) => {
   res.status(400).json(err.message);
 });

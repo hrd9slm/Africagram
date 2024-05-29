@@ -50,4 +50,35 @@ const addNewPost = async (req, res) => {
   }
 };
 
-module.exports = { addNewPost };
+const getTheletestPostes = async (req, res) => {
+  try {
+    // Find the lastes postes
+
+    // Send the lastes postes
+    const lastPostes = await prisma.Publication.findMany({
+      orderBy: {
+        date_creation: "desc",
+      },
+      select: {
+        id: true,
+        caption: true,
+        date_creation: true,
+        date_modification: true,
+        utilisateur_id: true,
+        image_url: true,
+      },
+    });
+
+    // Send the lastes postes
+    return res.status(200).json({
+      message: "Lastest postes",
+      postes: lastPostes,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while geting the post" });
+  }
+};
+module.exports = { addNewPost, getTheletestPostes };

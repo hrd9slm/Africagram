@@ -1,3 +1,4 @@
+
 const { PrismaClient } = require("@prisma/client");
 const { hashPassword } = require('../utils/hashPassword');
 const { comparePasswords } = require('../utils/comparePasswords');

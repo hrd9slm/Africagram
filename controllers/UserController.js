@@ -1,37 +1,131 @@
 const { PrismaClient } = require("@prisma/client");
-
+const { hashPassword } = require('../utils/hashPassword');
+const { comparePasswords } = require('../utils/comparePasswords');
+const { generateToken } = require('../utils/jwt');
 const prisma = new PrismaClient();
 const Joi = require('joi');
 
-class UserController {
-    constructor(){
-        this.registerPattern=joi.object({
-            name: Joi.string().min(5).max(30).required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).required()
-          });
-          this.loginPattern = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).required()
-          });
-    }
-    registerUser(req, res) {
-      const { name, email, password } = req.body;
+const UserController ={
+   
+   registerPattern : Joi.object({
+     firstname: Joi.string().min(5).max(30).required(),
+     lastname: Joi.string().min(5).max(30).required(),
+     email: Joi.string().email().required(),
+     password: Joi.string().min(6).required()
+   }),
+  
+     loginPattern : Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(6).required()
+    }),
+ 
+  registerUser: async(req, res)=> {
+     
+      const { error } = UserController.registerPattern.validate(req.body);
+     if (error) {
+       return res.status(400).send(error.details[0].message);
+     }
+    const { firstname,lastname,email,password  } = req.body;
 
-      res.send('User registered');
-    }
   
-    loginUser(req, res) {
-      const { email, password } = req.body;
-      // Login logic here
-      res.send('User logged in');
+    try {
+      const hashedPassword = await hashPassword(password);
+        const newUser = await prisma.Utilisateur.create({
+            data: {
+                firstname,
+                lastname,
+                email,
+                password: hashedPassword,
+            },
+        });
+
+        console.log(`New user registered: ${newUser.name} (${newUser.email})`);
+    } catch (error) {
+        console.error('Error registering new user:', error);
     }
+    res.send('User registered');
+    },
   
-    logoutUser(req, res) {
-      // Logout logic here
-      res.send('User logged out');
+     loginUser:async(req, res) =>{
+       const { email, password } = req.body;
+        try {
+         
+          const user = await prisma.utilisateur.findUnique( 
+            {where: {
+            email,
+          },
+        });
+      
+          if (!user) {
+            throw new Error('Utilisateur introuvable');
+          }
+      
+         
+          const isMatch = await comparePasswords(password,email);
+          console.log(isMatch);
+      
+          if (!isMatch) {
+            throw new Error('Mot de passe incorrect');
+          }
+          const token = generateToken(user);
+          console.log("token",token);
+          return res.send([user,token]);
+        } catch (error) {
+          console.error(error.message);
+          return res.send(error.message);
+         
+        }
+     
+     },
+  
+     logoutUser:async (req, res)=> {
+       res.send('User logged out');
+     },
+
+    getAllUsers: async(req, res)=> {
+      try {
+        const users = await prisma.utilisateur.findMany();
+        res.json(users);
+      } catch (err) {
+        res.status(500).send('Error retrieving users');
+      }
+    },
+  
+     updateUser:async(req, res) =>{
+      const { id } = req.params;
+      const { error } = this.registerPattern.validate(req.body);
+      if (error) return res.status(400).send(error.details[0].message);
+  
+      const { firstname, lastname, email, password } = req.body;
+  
+      try {
+        const hashedPassword = await hashPassword(password);
+        const user = await prisma.utilisateur.update({
+          where: { id },
+          data: {
+            firstname,
+            lastname,
+            email,
+            password: hashedPassword,
+          },
+        });
+        res.json(user);
+      } catch (err) {
+        res.status(500).send('Error updating user');
+      }
+    },
+  
+    deleteUser:async(req, res) =>{
+      const { id } = req.params;
+  
+      try {
+        await prisma.utilisateur.delete({ where: { id } });
+        res.send('User deleted successfully');
+      } catch (err) {
+        res.status(500).send('Error deleting user');
+      }
     }
   }
   
-  module.exports = new UserController();
+  module.exports = UserController;
   

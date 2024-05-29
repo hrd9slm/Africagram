@@ -1,11 +1,8 @@
-/*const express = require("express");
-const { PrismaClient } = require("@prisma/client");
-const app = express();
-const bodyParser = require("body-parser");
+const express = require("express");
+const likesRouter = express.Router();
+const likesControler = require("../controllers/LikesController");
 
-app.use(bodyParser.json());
+// Create a POST request endpoint, like /posts
+likesRouter.post("/posts/:id/like", likesControler.addNewLike);
 
-const prisma = new PrismaClient();
-
-// Liking a post
-app.post("/posts/:id/like");*/
+module.exports = likesRouter;

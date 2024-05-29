@@ -6,10 +6,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const uplodeImageRouter = require("./routes/uplodeImages");
 const postRouter = require("./routes/PostRoutes");
+const likesRouter = require("./routes/LikesRoutes");
+const commentsRouter = require("./routes/CommentRoutes");
 
 app.use(express.static("public"));
 app.use(uplodeImageRouter);
 app.use(postRouter);
+app.use(likesRouter);
+app.use(commentsRouter);
 
 app.use(bodyParser.json());
 app.use((err, req, res, next) => {

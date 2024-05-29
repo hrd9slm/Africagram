@@ -1,4 +1,3 @@
-/*
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const app = express();
@@ -10,9 +9,8 @@ app.use(bodyParser.json());
 const prisma = new PrismaClient();
 
 const addNewLike = async (req, res) => {
-  const schema = Joi.object().keys({
-    postId: Joi.string().required(),
-    userId: Joi.string().required(),
+  const schema = Joi.object({
+    utilisateur_id: Joi.string().required(),
   });
 
   const { error } = schema.validate(req.body);
@@ -23,7 +21,7 @@ const addNewLike = async (req, res) => {
   try {
     // Find the post
     const post = await prisma.Publication.findUnique({
-      where: { id: postId },
+      where: { id: req.params.id },
     });
 
     if (!post) {
@@ -33,13 +31,8 @@ const addNewLike = async (req, res) => {
     // Update the likes count
     const newAime = await prisma.Aime.create({
       data: {
-        utilisateurId: userId,
-        postId: postId,
-      },
-      select: {
-        id: true,
-        utilisateurId: true,
-        postId: true,
+        utilisateurId: req.body.utilisateur_id,
+        postId: req.params.id,
       },
     });
 
@@ -53,5 +46,4 @@ const addNewLike = async (req, res) => {
   }
 };
 
-module.exports = addNewLike;
-*/
+module.exports = { addNewLike };

@@ -1,9 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
+
+const { PrismaClient } = require("@prisma/client");
+const { hashPassword } = require('../utils/hashPassword');
 const { comparePasswords } = require('../utils/comparePasswords');
-const { generateToken, verifyToken } = require('../utils/jwt');
+const { generateToken,verifyToken} = require('../utils/jwt');
+const prisma = new PrismaClient();
 const Joi = require('joi');
 
-const prisma = new PrismaClient();
 
 const AuthController= {
   registerPattern : Joi.object({
@@ -77,7 +79,15 @@ const AuthController= {
     
     },
 
-
+    authenticateUser:(req, res, next)=> {
+      const authHeader = req.headers['authorization'];
+      const token = authHeader  
+        verifyToken(token);
+        
+        return res.send("you are authenteficate")
+     
+    }
+   
 }
 
 module.exports = AuthController;

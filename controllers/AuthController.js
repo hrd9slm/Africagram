@@ -81,10 +81,17 @@ const AuthController= {
 
     authenticateUser:(req, res, next)=> {
       const authHeader = req.headers['authorization'];
-      const token = authHeader  
-        verifyToken(token);
-        
-        return res.send("you are authenteficate")
+      const token = authHeader   && authHeader.split(' ')[1];
+
+       if (verifyToken(token)!=null) {
+         console.log("verifyToken true",verifyToken);
+         res.send("You are authenticated");
+         
+       } else {
+         res.status(401).send("You are not authenticated");
+         console.log("verifyToken else",verifyToken(token));
+      }
+     
      
     }
    

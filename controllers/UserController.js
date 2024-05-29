@@ -78,9 +78,6 @@ const UserController ={
      
      },
   
-     logoutUser:async (req, res)=> {
-       res.send('User logged out');
-     },
 
     getAllUsers: async(req, res)=> {
       try {

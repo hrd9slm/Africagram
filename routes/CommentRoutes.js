@@ -30,7 +30,7 @@ commentsRouter.post("/posts/:id/comments", async (req, res) => {
     const newComment = await prisma.commentaire.create({
       data: {
         message: commentText,
-        utilisateur_Id: userId,
+        utilisateur_id: userId,
         post_id: postId,
       },
     });

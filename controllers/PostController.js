@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const Joi = require("joi");
+const { generateToken, verifyToken } = require("../utils/jwt");
 const addNewPost = async (req, res) => {
   try {
     /* const token = req.headers.authorization.split(" ")[1];
@@ -23,25 +24,32 @@ const addNewPost = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    // verified token
+    const authHeader = req.headers["authorization"];
+    const isVerified = authHeader && authHeader.split(" ")[1];
+    if (isVerified) {
+      // Create a new post
+      const newPost = await prisma.Publication.create({
+        data: req.body,
+        select: {
+          id: true,
+          caption: true,
+          date_creation: true,
+          date_modification: true,
+          utilisateur_id: true,
+          image_url: true,
+        },
+      });
 
-    // Create a new post
-    const newPost = await prisma.Publication.create({
-      data: req.body,
-      select: {
-        id: true,
-        caption: true,
-        date_creation: true,
-        date_modification: true,
-        utilisateur_id: true,
-        image_url: true,
-      },
-    });
-
-    // Send the newly created post data
-    return res.status(201).json({
-      message: "Post created successfully",
-      post: newPost,
-    });
+      // Send the newly created post data
+      return res.status(201).json({
+        message: "Post created successfully",
+        post: newPost,
+        tokenVerified: isVerified,
+      });
+    } else {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
   } catch (error) {
     console.error(error);
     return res

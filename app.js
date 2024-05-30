@@ -21,6 +21,8 @@ app.use(commentsRouter);
 
 app.use("/api", routes.routeUser);
 app.use("/", routes.routAuth);
+app.use("/", routes.routeFollower);
+app.use("/statistics", routes.routeStatics);
 
 app.use((err, req, res, next) => {
   res.status(400).json(err.message);

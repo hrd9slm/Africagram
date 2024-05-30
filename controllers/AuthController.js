@@ -9,15 +9,15 @@ const Joi = require('joi');
 
 const AuthController= {
   registerPattern : Joi.object({
-    firstname: Joi.string().min(5).max(30).required(),
-    lastname: Joi.string().min(5).max(30).required(),
+    firstname: Joi.string().max(30).required(),
+    lastname: Joi.string().max(30).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required()
   }),
  
     loginPattern : Joi.object({
      email: Joi.string().email().required(),
-     password: Joi.string().min(6).required()
+     password: Joi.string().min(4).required()
    }),
 
  registerUser: async(req, res)=> {
@@ -30,6 +30,19 @@ const AuthController= {
 
  
    try {
+
+    const user = await prisma.utilisateur.findUnique( 
+      {where: {
+      email,
+    },
+  });
+
+    if (user) {
+    
+       res.send('User already Exist');
+    }
+
+
      const hashedPassword = await hashPassword(password);
        const newUser = await prisma.Utilisateur.create({
            data: {

@@ -37,17 +37,22 @@ const followersController = {
   },
 
   getFollowers: async (req, res) => {
-    const { userId } = req.user;
-    //console.log(".........userId=",userId,"............req.user=",req.user.id)
+    const { id } = req.user;
+    console.log(".........userId=",id,"............req.user=",req.user.id)
 
     try {
       const followers = await prisma.follower.findMany({
-        where: { following_id: userId },
-        include: { follower: true },
+        where: { follower_id: id },
+        include: { follower:
+          {select: {
+            id: true
+          }}
+         }
       });
 
       res.json(followers);
     } catch (err) {
+  
       console.error(err);
       res.status(500).send("Error fetching followers");
     }

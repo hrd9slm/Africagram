@@ -10,4 +10,28 @@ router.get(
   isAdminMiddleware,
   StatisticsController.check
 );
+router.get(
+  "/total-users",
+  authMiddleware,
+  isAdminMiddleware,
+  StatisticsController.getTotalUsers
+);
+router.get(
+  "/users-by-country",
+  authMiddleware,
+  isAdminMiddleware,
+  StatisticsController.getUsersByCountry
+);
+router.get(
+  "/average-posts-per-user",
+  authMiddleware,
+  isAdminMiddleware,
+  StatisticsController.getAveragePostsPerUser
+);
+router.get(
+  "/gender",
+  authMiddleware,
+  isAdminMiddleware,
+  StatisticsController.getGender
+);
 module.exports = router;

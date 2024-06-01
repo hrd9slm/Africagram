@@ -3,7 +3,7 @@ require("dotenv").config();
 // const routeUser=require('./routes/UserRoutes');
 // const routeAuth=require('./routes/AuthRoutes');
 const routes = require("./routes");
-const uplodeImageRouter = require("./routes/uplodeImages");
+const uplodeImageRouter = require("./routes/uplode-images");
 const postRouter = require("./routes/PostRoutes");
 const likesRouter = require("./routes/LikesRoutes");
 const commentsRouter = require("./routes/CommentRoutes");

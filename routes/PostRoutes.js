@@ -6,6 +6,10 @@ const postControler = require("../controllers/PostController");
 postRouter.post("/post/add", postControler.addNewPost);
 
 // Create a Get request endpoint, to show the lastes posts was created
-postRouter.get("/posts/latest", postControler.getTheletestPostes);
+postRouter.get("/posts/latest", (req, res) => {
+    res.redirect("/posts/latest/1");
+});
+postRouter.get("/posts/latest/:pageNum", postControler.getTheletestPostes);
+
 
 module.exports = postRouter;

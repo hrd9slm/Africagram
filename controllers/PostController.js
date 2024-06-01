@@ -46,6 +46,9 @@ const addNewPost = async (req, res) => {
 
 const getTheletestPostes = async (req, res) => {
   try {
+
+    const skipCount = +req.params.pageNum * 5; // Number of posts to skip
+    const takeCount = 5; // Number of posts to take
     // Find the lastes postes
 
     // Send the lastes postes // Find the latest posts with a limit of 5
@@ -53,7 +56,8 @@ const getTheletestPostes = async (req, res) => {
       orderBy: {
         date_creation: "desc", // Order by creation date in descending order
       },
-      take: 5, // Limit the result to 5 posts
+      skip: skipCount, // Skip the last 5 posts
+      take: takeCount, // Take the next 5 posts
       select: {
         id: true,
         caption: true,

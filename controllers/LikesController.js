@@ -31,8 +31,8 @@ const addNewLike = async (req, res) => {
     // Update the likes count
     const newAime = await prisma.Aime.create({
       data: {
-        utilisateurId: req.body.utilisateur_id,
-        postId: req.params.id,
+        utilisateur_id: req.body.utilisateur_id,
+        post_id: req.params.id,
       },
     });
 

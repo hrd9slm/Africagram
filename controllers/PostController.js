@@ -1,22 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const Joi = require("joi");
+
 const addNewPost = async (req, res) => {
   try {
-    /* const token = req.headers.authorization.split(" ")[1];
-      if (!token) {
-        return res.status(401).json({ error: "No token provided" });
-      }
-  
-      const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-      const userId = decodedToken.id;
-      */
-
     const schema = Joi.object({
       caption: Joi.string().required(),
-      utilisateur_id: Joi.string().required(),
     });
-    console.log(req.body);
 
     const { error } = schema.validate(req.body);
 
@@ -25,8 +15,12 @@ const addNewPost = async (req, res) => {
     }
 
     // Create a new post
+    const userId = req.user.id;
     const newPost = await prisma.Publication.create({
-      data: req.body,
+      data: {
+        caption: req.body.caption,
+        utilisateur_id: userId
+      },
       select: {
         id: true,
         caption: true,
@@ -52,13 +46,17 @@ const addNewPost = async (req, res) => {
 
 const getTheletestPostes = async (req, res) => {
   try {
+    const skipCount = +req.params.pageNum * 5; // Number of posts to skip
+    const takeCount = 5; // Number of posts to take
     // Find the lastes postes
 
-    // Send the lastes postes
-    const lastPostes = await prisma.Publication.findMany({
+    // Send the lastes postes // Find the latest posts with a limit of 5
+    const lastPosts = await prisma.Publication.findMany({
       orderBy: {
-        date_creation: "desc",
+        date_creation: "desc", // Order by creation date in descending order
       },
+      skip: skipCount, // Skip the last 5 posts
+      take: takeCount, // Take the next 5 posts
       select: {
         id: true,
         caption: true,
@@ -72,7 +70,7 @@ const getTheletestPostes = async (req, res) => {
     // Send the lastes postes
     return res.status(200).json({
       message: "Lastest postes",
-      postes: lastPostes,
+      postes: lastPosts,
     });
   } catch (error) {
     console.error(error);
@@ -81,4 +79,32 @@ const getTheletestPostes = async (req, res) => {
       .json({ error: "An error occurred while geting the post" });
   }
 };
-module.exports = { addNewPost, getTheletestPostes };
+const updatePostImageUrl = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+    const userId = req.user.id;
+    const postId = req.params.postId;
+    const post = await prisma.Publication.findUnique({
+      where: {
+        id: postId,
+        utilisateur_id: userId,
+      },
+    });
+    if (post) {
+      const img = "img/" + req.file.filename;
+      await prisma.Publication.update({
+        where: { id: postId },
+        data: { image_url: img },
+      });
+      res.send("File uploaded successfully.");
+    } else {
+      res.status(404).send("You don't have any post with that id.");
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
+};
+module.exports = { addNewPost, getTheletestPostes, updatePostImageUrl };

@@ -1,11 +1,17 @@
 const express = require("express");
 const postRouter = express.Router();
-const postControler = require("../controllers/PostController");
+const authMiddleware = require("../middlewares/AuthMiddleware");
+const { addNewPost, getTheletestPostes } = require("../controllers/PostController");
 
 // Create a POST request endpoint, like /posts
-postRouter.post("/post/add", postControler.addNewPost);
+postRouter.post("/add", authMiddleware, addNewPost);
 
+// Create a Get request endpoint, to redirect the user to the write url
+postRouter.get("/latest", authMiddleware, (req, res) => {
+    res.redirect("/latest/1");
+});
 // Create a Get request endpoint, to show the lastes posts was created
-postRouter.get("/posts/latest", postControler.getTheletestPostes);
+postRouter.get("/latest/:pageNum", authMiddleware, getTheletestPostes);
+
 
 module.exports = postRouter;

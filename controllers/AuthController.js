@@ -5,6 +5,8 @@ const { comparePasswords } = require('../utils/comparePasswords');
 const { generateToken,verifyToken} = require('../utils/jwt');
 const prisma = new PrismaClient();
 const Joi = require('joi');
+const BadRequestError = require('../errors/bad-request'); 
+const NotFound = require('../errors/not-found'); 
 
 
 const AuthController= {
@@ -39,7 +41,7 @@ const AuthController= {
 
     if (user) {
     
-       res.send('User already Exist');
+      throw new BadRequestError('Try an email adress');
     }
 
 
@@ -71,22 +73,24 @@ const AuthController= {
        });
      
          if (!user) {
-           throw new Error('Utilisateur introuvable');
+           //throw new Error('User unfounded');
+           throw new NotFound('User unfounded');
          }
      
         
-         const isMatch = await comparePasswords(password,email);
+         const isMatch = await comparePasswords(password,user.password);
          console.log(isMatch);
      
          if (!isMatch) {
-           throw new Error('Mot de passe incorrect');
+          throw new BadRequestError('name or email incorrect!');
          }
          const token = generateToken(user);
          console.log("token",token);
-         return res.send([user,token]);
+         res.setHeader('Authorization', `Bearer ${token}`);
+         return res.send({user,token});
        } catch (error) {
          console.error(error.message);
-         return res.send(error.message);
+         return  res.status(error.statusCode).json({ message: error.message });
         
        }
     

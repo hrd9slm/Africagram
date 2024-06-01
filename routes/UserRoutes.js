@@ -3,11 +3,10 @@ const userController = require("../controllers/UserController");
 const authmiddelware = require("../middlewares/AuthMiddleware");
 const router = express.Router();
 
-router.route("/users").get(userController.getAllUsers);
-
 router
-  .route("/users/:id")
-  .put(authmiddelware, userController.updateUser)
-  .delete(authmiddelware, userController.deleteUser);
+  .route("/users")
+  .get(userController.getAllUsers)
+  .put(authmiddelware, userController.updateUser);
+
 
 module.exports = router;

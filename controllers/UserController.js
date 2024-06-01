@@ -81,21 +81,16 @@ const UserController = {
   },
 
   updateUser: async (req, res) => {
-    const { id } = req.params;
+    
     const { error } = UserController.registerPattern.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     const { firstname, lastname, email, password } = req.body;
     const userId = req.user.id;
-
-    if (id !== userId) {
-      return res.status(403).send("You are not authorized to update this user");
-    }
-
     try {
       const hashedPassword = await hashPassword(password);
       const user = await prisma.utilisateur.update({
-        where: { id },
+        where: { id:userId },
         data: {
           firstname,
           lastname,
@@ -109,20 +104,20 @@ const UserController = {
     }
   },
 
-  deleteUser: async (req, res) => {
-    const { id } = req.params;
-    const userId = req.user.id;
+  // deleteUser: async (req, res) => {
+   
+  //   const userId = req.user.id;
 
-    if (id !== userId) {
-      return res.status(403).send("You are not authorized to delete this user");
-    }
-    try {
-      await prisma.utilisateur.delete({ where: { id } });
-      res.send("User deleted successfully");
-    } catch (err) {
-      res.status(500).send("Error deleting user");
-    }
-  },
+  //   if (id !== userId) {
+  //     return res.status(403).send("You are not authorized to delete this user");
+  //   }
+  //   try {
+  //     await prisma.utilisateur.delete({ where: { id :userId} });
+  //     res.send("User deleted successfully");
+  //   } catch (err) {
+  //     res.status(500).send("Error deleting user");
+  //   }
+  // },
 };
 
 module.exports = UserController;

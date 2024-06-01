@@ -11,5 +11,6 @@ const uplodeImageRouter = require("./uplode-images");
 const postRouter = require("./PostRoutes");
 const likesRouter = require("./LikesRoutes");
 const commentsRouter = require("./CommentRoutes");
+const profileRouter = require("./ProfileRoutes");
 
-module.exports = { routeUser, routAuth, routeNewsFeed, routeComment, routeLike, routeFollower, routePost, routeStatics, routeProfil, uplodeImageRouter, postRouter, likesRouter, commentsRouter };
+module.exports = { routeUser, routAuth, routeNewsFeed, routeComment, routeLike, routeFollower, routePost, routeStatics, routeProfil, uplodeImageRouter, postRouter, likesRouter, commentsRouter, profileRouter };

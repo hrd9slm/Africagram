@@ -19,6 +19,8 @@ app.use("/upload", routes.uplodeImageRouter);
 app.use("/post/like", routes.likesRouter);
 app.use("/post/comment", routes.commentsRouter);
 app.use("/statistics", routes.routeStatics);
+app.use("/profiles", routes.profileRouter);
+
 
 
 app.use((err, req, res, next) => {

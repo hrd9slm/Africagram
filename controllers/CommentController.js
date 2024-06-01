@@ -2,7 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const addNewComment = async (req, res) => {
     const postId = req.params.id;
-    const userId = req.body.userId;
     const commentText = req.body.comment;
 
     // Authenticate the user (optional)
@@ -19,6 +18,7 @@ const addNewComment = async (req, res) => {
         }
 
         // Create a new comment
+        const userId = req.user.id;
         const newComment = await prisma.commentaire.create({
             data: {
                 message: commentText,

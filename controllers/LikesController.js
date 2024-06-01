@@ -5,15 +5,7 @@ const Joi = require("joi");
 
 
 const addNewLike = async (req, res) => {
-  const schema = Joi.object({
-    utilisateur_id: Joi.string().required(),
-  });
 
-  const { error } = schema.validate(req.body);
-
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
   try {
     // Find the post
     const post = await prisma.Publication.findUnique({
@@ -24,10 +16,11 @@ const addNewLike = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
     // Check if the user has already liked the post
+    const userId = req.user.id;
     const existingLike = await prisma.Aime.findFirst({
       where: {
         AND: [
-          { utilisateur_id: req.body.utilisateur_id },
+          { utilisateur_id: req.user.id },
           { post_id: req.params.id },
         ],
       },
@@ -40,7 +33,7 @@ const addNewLike = async (req, res) => {
     // Update the likes count
     const newAime = await prisma.Aime.create({
       data: {
-        utilisateur_id: req.body.utilisateur_id,
+        utilisateur_id: userId,
         post_id: req.params.id,
       },
     });

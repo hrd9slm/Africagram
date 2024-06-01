@@ -1,21 +1,15 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const Joi = require("joi");
+
 const addNewPost = async (req, res) => {
   try {
-    /* const token = req.headers.authorization.split(" ")[1];
-      if (!token) {
-        return res.status(401).json({ error: "No token provided" });
-      }
-  
-      const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-      const userId = decodedToken.id;
-      */
 
     const schema = Joi.object({
       caption: Joi.string().required(),
       utilisateur_id: Joi.string().required(),
     });
+
     console.log(req.body);
 
     const { error } = schema.validate(req.body);
@@ -54,11 +48,12 @@ const getTheletestPostes = async (req, res) => {
   try {
     // Find the lastes postes
 
-    // Send the lastes postes
-    const lastPostes = await prisma.Publication.findMany({
+    // Send the lastes postes // Find the latest posts with a limit of 5
+    const lastPosts = await prisma.Publication.findMany({
       orderBy: {
-        date_creation: "desc",
+        date_creation: "desc", // Order by creation date in descending order
       },
+      take: 5, // Limit the result to 5 posts
       select: {
         id: true,
         caption: true,
@@ -72,7 +67,7 @@ const getTheletestPostes = async (req, res) => {
     // Send the lastes postes
     return res.status(200).json({
       message: "Lastest postes",
-      postes: lastPostes,
+      postes: lastPosts,
     });
   } catch (error) {
     console.error(error);

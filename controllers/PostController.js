@@ -80,4 +80,28 @@ const getTheletestPostes = async (req, res) => {
       .json({ error: "An error occurred while geting the post" });
   }
 };
-module.exports = { addNewPost, getTheletestPostes };
+const updatePostImageUrl = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+    const postId = req.params.postId;
+    const post = await prisma.Publication.findUnique({
+      where: { id: postId },
+    });
+    if (post) {
+      const img = "img/" + req.file.filename;
+      await prisma.Publication.update({
+        where: { id: postId },
+        data: { image_url: img },
+      });
+    } else {
+      res.status(404).send("The post is not founded.");
+    }
+    res.send("File uploaded successfully.");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
+}
+module.exports = { addNewPost, getTheletestPostes, updatePostImageUrl };

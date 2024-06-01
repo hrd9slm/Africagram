@@ -7,5 +7,9 @@ const routeFollower = require('./FollowerRoutes');
 const routePost = require('./PostRoutes');
 const routeStatics = require('./StatisticsRoutes');
 const routeProfil = require('./ProfileRoutes');
+const uplodeImageRouter = require("./uplode-images");
+const postRouter = require("./PostRoutes");
+const likesRouter = require("./LikesRoutes");
+const commentsRouter = require("./CommentRoutes");
 
-module.exports = { routeUser, routAuth, routeNewsFeed, routeComment, routeLike, routeFollower, routePost, routeStatics, routeProfil };
+module.exports = { routeUser, routAuth, routeNewsFeed, routeComment, routeLike, routeFollower, routePost, routeStatics, routeProfil, uplodeImageRouter, postRouter, likesRouter, commentsRouter };
